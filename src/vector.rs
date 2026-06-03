@@ -118,8 +118,25 @@ impl Mul<f64> for Vector {
 
 impl Mul<Vector> for f64 {
     type Output = Vector;
+
     fn mul(self, rhs: Vector) -> Self::Output {
         rhs * self
+    }
+}
+
+impl Mul<i32> for Vector {
+    type Output = Vector;
+
+    fn mul(self, rhs: i32) -> Self::Output {
+        self * rhs as f64
+    }
+}
+
+impl Mul<Vector> for i32 {
+    type Output = Vector;
+
+    fn mul(self, rhs: Vector) -> Self::Output {
+        rhs * self as f64
     }
 }
 
@@ -128,6 +145,14 @@ impl Div<f64> for Vector {
 
     fn div(self, rhs: f64) -> Self::Output {
         self * (1. / rhs)
+    }
+}
+
+impl Div<i32> for Vector {
+    type Output = Vector;
+
+    fn div(self, rhs: i32) -> Self::Output {
+        self / rhs as f64
     }
 }
 

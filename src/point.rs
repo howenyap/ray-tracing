@@ -1,4 +1,7 @@
-use std::{fmt::Display, ops::Add};
+use std::{
+    fmt::Display,
+    ops::{Add, Sub},
+};
 
 use crate::vector::Vector;
 
@@ -33,6 +36,18 @@ impl Display for Point {
     }
 }
 
+impl Sub for Point {
+    type Output = Vector;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        let x = self.x() - rhs.x();
+        let y = self.y() - rhs.y();
+        let z = self.z() - rhs.z();
+
+        Vector::new(x, y, z)
+    }
+}
+
 impl Add<Vector> for Point {
     type Output = Point;
 
@@ -42,5 +57,13 @@ impl Add<Vector> for Point {
         let z = self.z() + rhs.z();
 
         Point::new(x, y, z)
+    }
+}
+
+impl Sub<Vector> for Point {
+    type Output = Point;
+
+    fn sub(self, rhs: Vector) -> Self::Output {
+        self + -rhs
     }
 }

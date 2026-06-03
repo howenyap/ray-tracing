@@ -14,7 +14,7 @@ impl Ray {
         &self.origin
     }
 
-    pub fn diretion(&self) -> &Vector {
+    pub fn direction(&self) -> &Vector {
         &self.direction
     }
 
