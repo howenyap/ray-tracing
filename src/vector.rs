@@ -3,8 +3,10 @@ use std::{
     ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub},
 };
 
+use crate::point::Point;
+
 #[derive(Debug, Clone, Copy)]
-struct Vector(f64, f64, f64);
+pub struct Vector(f64, f64, f64);
 
 impl Vector {
     pub fn new(x: f64, y: f64, z: f64) -> Self {
@@ -49,6 +51,12 @@ impl Vector {
 
     pub fn unit_vector(&self) -> Self {
         *self / self.len()
+    }
+}
+
+impl Display for Vector {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{} {} {}", self.x(), self.y(), self.z())
     }
 }
 
@@ -147,8 +155,14 @@ impl DivAssign<f64> for Vector {
     }
 }
 
-impl Display for Vector {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{} {} {}", self.x(), self.y(), self.z())
+impl Add<Point> for Vector {
+    type Output = Point;
+
+    fn add(self, rhs: Point) -> Self::Output {
+        let x = self.x() + rhs.x();
+        let y = self.y() + rhs.y();
+        let z = self.z() + rhs.z();
+
+        Point::new(x, y, z)
     }
 }

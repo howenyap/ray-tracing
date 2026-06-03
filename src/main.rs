@@ -2,6 +2,7 @@ use crate::colour::Colour;
 
 mod colour;
 mod point;
+mod ray;
 mod vector;
 
 fn main() {
