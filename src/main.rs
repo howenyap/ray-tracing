@@ -39,8 +39,24 @@ fn main() {
 }
 
 fn ray_colour(ray: &Ray) -> Colour {
-    let unit_direction = ray.direction().unit_vector();
-    let a = 0.5 * (unit_direction.y() + 1.);
+    if hit_sphere(&Point::new(0., 0., -1.), 0.5, ray) {
+        Colour::red()
+    } else {
+        let unit_direction = ray.direction().unit_vector();
+        let a = 0.5 * (unit_direction.y() + 1.);
 
-    (1. - a) * Colour::new(1., 1., 1.) + a * Colour::new(0.5, 0.7, 1.)
+        (1. - a) * Colour::new(1., 1., 1.) + a * Colour::new(0.5, 0.7, 1.)
+    }
+}
+
+fn hit_sphere(center: &Point, radius: f64, ray: &Ray) -> bool {
+    let oc = *center - *ray.origin();
+
+    let a = ray.direction().dot(ray.direction());
+    let b = 2. * oc.dot(ray.direction());
+    let c = oc.dot(&oc) - radius * radius;
+
+    let discriminant = b * b - 4. * a * c;
+
+    discriminant >= 0.
 }

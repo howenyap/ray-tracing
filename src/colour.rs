@@ -15,6 +15,10 @@ impl Colour {
         Colour(0., 0., 0.)
     }
 
+    pub const fn red() -> Self {
+        Colour(1., 0., 0.)
+    }
+
     pub const fn r(&self) -> f64 {
         self.0
     }
