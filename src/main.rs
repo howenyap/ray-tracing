@@ -39,8 +39,12 @@ fn main() {
 }
 
 fn ray_colour(ray: &Ray) -> Colour {
-    if hit_sphere(&Point::new(0., 0., -1.), 0.5, ray) {
-        Colour::red()
+    let t = hit_sphere(&Point::new(0., 0., -1.), 0.5, ray);
+
+    if t.is_sign_positive() {
+        let n = (ray.at(t) - Point::new(0., 0., -1.)).unit_vector();
+
+        0.5 * Colour::new(n.x() + 1., n.y() + 1., n.z() + 1.)
     } else {
         let unit_direction = ray.direction().unit_vector();
         let a = 0.5 * (unit_direction.y() + 1.);
@@ -49,14 +53,19 @@ fn ray_colour(ray: &Ray) -> Colour {
     }
 }
 
-fn hit_sphere(center: &Point, radius: f64, ray: &Ray) -> bool {
+fn hit_sphere(center: &Point, radius: f64, ray: &Ray) -> f64 {
     let oc = *center - *ray.origin();
 
     let a = ray.direction().dot(ray.direction());
-    let b = 2. * oc.dot(ray.direction());
+    let b = -2. * oc.dot(ray.direction());
     let c = oc.dot(&oc) - radius * radius;
 
     let discriminant = b * b - 4. * a * c;
 
-    discriminant >= 0.
+    // no intersection points
+    if discriminant.is_sign_negative() {
+        -1.
+    } else {
+        (-b - discriminant.sqrt()) / (2. * a)
+    }
 }
