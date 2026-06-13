@@ -56,16 +56,16 @@ fn ray_colour(ray: &Ray) -> Colour {
 fn hit_sphere(center: &Point, radius: f64, ray: &Ray) -> f64 {
     let oc = *center - *ray.origin();
 
-    let a = ray.direction().dot(ray.direction());
-    let b = -2. * oc.dot(ray.direction());
-    let c = oc.dot(&oc) - radius * radius;
+    let a = ray.direction().len_squared();
+    let h = ray.direction().dot(&oc);
+    let c = oc.len_squared() - radius * radius;
 
-    let discriminant = b * b - 4. * a * c;
+    let discriminant = h * h - a * c;
 
     // no intersection points
     if discriminant.is_sign_negative() {
         -1.
     } else {
-        (-b - discriminant.sqrt()) / (2. * a)
+        (h - discriminant.sqrt()) / a
     }
 }
