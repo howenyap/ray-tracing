@@ -61,3 +61,14 @@ impl Hittable for Shape {
         }
     }
 }
+
+struct HittableList(Vec<Box<dyn Hittable>>);
+
+impl Hittable for HittableList {
+    fn hit(&self, ray: &Ray, ray_tmin: f64, ray_tmax: f64) -> Option<HitRecord> {
+        self.0
+            .iter()
+            .filter_map(|obj| obj.hit(ray, ray_tmin, ray_tmax))
+            .min_by(|a, b| a.t.total_cmp(&b.t))
+    }
+}
