@@ -5,11 +5,19 @@ pub struct HitRecord {
     point: Point,
     normal: Vector,
     t: f64,
+    // true: ray is outside surface
+    // false: ray is inside surface
+    front_face: bool,
 }
 
 impl HitRecord {
-    pub fn new(point: Point, normal: Vector, t: f64) -> Self {
-        Self { point, normal, t }
+    pub fn new(point: Point, normal: Vector, t: f64, front_face: bool) -> Self {
+        Self {
+            point,
+            normal,
+            t,
+            front_face,
+        }
     }
 
     pub fn normal(&self) -> &Vector {
@@ -45,7 +53,10 @@ impl Hittable for Shape {
                 let normal = (point - *center) / *radius;
                 let t = root;
 
-                Some(HitRecord::new(point, normal, t))
+                let front_face = ray.direction().dot(&normal).is_sign_negative();
+                let normal = if front_face { normal } else { -normal };
+
+                Some(HitRecord::new(point, normal, t, front_face))
             }
         }
     }
