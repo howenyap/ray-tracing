@@ -1,10 +1,15 @@
-use ray_tracing::{Colour, Hittable, Point, Ray, Shape, Vector};
+use ray_tracing::{Colour, Hittable, HittableList, Point, Ray, Shape, Vector};
 
 fn main() {
     let aspect_ratio = 16. / 9.;
 
     let image_width = 400;
     let image_height = ((image_width as f64 / aspect_ratio) as i32).max(1);
+
+    let world = HittableList::new([
+        Shape::sphere(Point::new(0., 0., -1.), 0.5),
+        Shape::sphere(Point::new(0., -100.5, -1.), 100.),
+    ]);
 
     let focal_length = 1.;
     let viewport_height = 2.;
@@ -20,7 +25,6 @@ fn main() {
     let viewport_upper_left =
         camera_center - Vector::new(0., 0., focal_length) - viewport_u / 2. - viewport_v / 2.;
     let pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
-    let sphere = Shape::sphere(Point::new(0., 0., -1.), 0.5);
 
     println!("P3\n{image_width} {image_height}\n255");
 
@@ -32,7 +36,7 @@ fn main() {
             let pixel_center = pixel00_loc + (i * pixel_delta_u) + (j * pixel_delta_v);
             let ray_direction = pixel_center - camera_center;
             let ray = Ray::new(camera_center, ray_direction);
-            let pixel_colour = ray_colour(&ray, &sphere);
+            let pixel_colour = ray_colour(&ray, &world);
 
             println!("{pixel_colour}");
         }

@@ -62,7 +62,13 @@ impl Hittable for Shape {
     }
 }
 
-struct HittableList(Vec<Box<dyn Hittable>>);
+pub struct HittableList(Vec<Shape>);
+
+impl HittableList {
+    pub fn new(shapes: impl IntoIterator<Item = Shape>) -> Self {
+        Self(shapes.into_iter().collect())
+    }
+}
 
 impl Hittable for HittableList {
     fn hit(&self, ray: &Ray, ray_tmin: f64, ray_tmax: f64) -> Option<HitRecord> {
