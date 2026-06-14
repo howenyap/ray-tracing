@@ -1,4 +1,4 @@
-use ray_tracing::{Colour, Point, Ray, Vector};
+use ray_tracing::{Colour, Hittable, Point, Ray, Shape, Vector};
 
 fn main() {
     let aspect_ratio = 16. / 9.;
@@ -20,6 +20,7 @@ fn main() {
     let viewport_upper_left =
         camera_center - Vector::new(0., 0., focal_length) - viewport_u / 2. - viewport_v / 2.;
     let pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
+    let sphere = Shape::sphere(Point::new(0., 0., -1.), 0.5);
 
     println!("P3\n{image_width} {image_height}\n255");
 
@@ -31,18 +32,16 @@ fn main() {
             let pixel_center = pixel00_loc + (i * pixel_delta_u) + (j * pixel_delta_v);
             let ray_direction = pixel_center - camera_center;
             let ray = Ray::new(camera_center, ray_direction);
-            let pixel_colour = ray_colour(&ray);
+            let pixel_colour = ray_colour(&ray, &sphere);
 
             println!("{pixel_colour}");
         }
     }
 }
 
-fn ray_colour(ray: &Ray) -> Colour {
-    let t = hit_sphere(&Point::new(0., 0., -1.), 0.5, ray);
-
-    if t.is_sign_positive() {
-        let n = (ray.at(t) - Point::new(0., 0., -1.)).unit_vector();
+fn ray_colour(ray: &Ray, sphere: &impl Hittable) -> Colour {
+    if let Some(hit_record) = sphere.hit(ray, 0., f64::INFINITY) {
+        let n = hit_record.normal();
 
         0.5 * Colour::new(n.x() + 1., n.y() + 1., n.z() + 1.)
     } else {
@@ -50,22 +49,5 @@ fn ray_colour(ray: &Ray) -> Colour {
         let a = 0.5 * (unit_direction.y() + 1.);
 
         (1. - a) * Colour::new(1., 1., 1.) + a * Colour::new(0.5, 0.7, 1.)
-    }
-}
-
-fn hit_sphere(center: &Point, radius: f64, ray: &Ray) -> f64 {
-    let oc = *center - *ray.origin();
-
-    let a = ray.direction().len_squared();
-    let h = ray.direction().dot(&oc);
-    let c = oc.len_squared() - radius * radius;
-
-    let discriminant = h * h - a * c;
-
-    // no intersection points
-    if discriminant.is_sign_negative() {
-        -1.
-    } else {
-        (h - discriminant.sqrt()) / a
     }
 }

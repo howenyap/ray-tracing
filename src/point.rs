@@ -5,7 +5,7 @@ use std::{
 
 use crate::vector::Vector;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Default, Clone, Copy)]
 pub struct Point(f64, f64, f64);
 
 impl Point {
