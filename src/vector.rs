@@ -60,6 +60,8 @@ impl Display for Vector {
     }
 }
 
+// Vector ops
+
 impl Neg for Vector {
     type Output = Vector;
 
@@ -104,6 +106,16 @@ impl Mul for Vector {
     }
 }
 
+impl AddAssign for Vector {
+    fn add_assign(&mut self, rhs: Self) {
+        self.0 += rhs.x();
+        self.1 += rhs.y();
+        self.2 += rhs.z();
+    }
+}
+
+// f64 ops
+
 impl Mul<f64> for Vector {
     type Output = Vector;
 
@@ -124,43 +136,11 @@ impl Mul<Vector> for f64 {
     }
 }
 
-impl Mul<i32> for Vector {
-    type Output = Vector;
-
-    fn mul(self, rhs: i32) -> Self::Output {
-        self * rhs as f64
-    }
-}
-
-impl Mul<Vector> for i32 {
-    type Output = Vector;
-
-    fn mul(self, rhs: Vector) -> Self::Output {
-        rhs * self as f64
-    }
-}
-
 impl Div<f64> for Vector {
     type Output = Vector;
 
     fn div(self, rhs: f64) -> Self::Output {
         self * (1. / rhs)
-    }
-}
-
-impl Div<i32> for Vector {
-    type Output = Vector;
-
-    fn div(self, rhs: i32) -> Self::Output {
-        self / rhs as f64
-    }
-}
-
-impl AddAssign for Vector {
-    fn add_assign(&mut self, rhs: Self) {
-        self.0 += rhs.x();
-        self.1 += rhs.y();
-        self.2 += rhs.z();
     }
 }
 
@@ -179,6 +159,60 @@ impl DivAssign<f64> for Vector {
         self.2 /= rhs;
     }
 }
+
+// i32 ops
+
+impl Mul<i32> for Vector {
+    type Output = Vector;
+
+    fn mul(self, rhs: i32) -> Self::Output {
+        self * rhs as f64
+    }
+}
+
+impl Mul<Vector> for i32 {
+    type Output = Vector;
+
+    fn mul(self, rhs: Vector) -> Self::Output {
+        rhs * self as f64
+    }
+}
+
+impl Div<i32> for Vector {
+    type Output = Vector;
+
+    fn div(self, rhs: i32) -> Self::Output {
+        self / rhs as f64
+    }
+}
+
+// u32 ops
+
+impl Mul<u32> for Vector {
+    type Output = Vector;
+
+    fn mul(self, rhs: u32) -> Self::Output {
+        self * rhs as f64
+    }
+}
+
+impl Mul<Vector> for u32 {
+    type Output = Vector;
+
+    fn mul(self, rhs: Vector) -> Self::Output {
+        rhs * self as f64
+    }
+}
+
+impl Div<u32> for Vector {
+    type Output = Vector;
+
+    fn div(self, rhs: u32) -> Self::Output {
+        self / rhs as f64
+    }
+}
+
+// Point ops
 
 impl Add<Point> for Vector {
     type Output = Point;

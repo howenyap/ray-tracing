@@ -1,4 +1,4 @@
-use crate::{Point, Ray, Shape, Vector};
+use crate::{Interval, Point, Ray, Shape, Vector};
 
 #[derive(Debug, Default)]
 pub struct HitRecord {
@@ -26,11 +26,11 @@ impl HitRecord {
 }
 
 pub trait Hittable {
-    fn hit(&self, ray: &Ray, ray_tmin: f64, ray_tmax: f64) -> Option<HitRecord>;
+    fn hit(&self, ray: &Ray, interval: &Interval) -> Option<HitRecord>;
 }
 
 impl Hittable for Shape {
-    fn hit(&self, ray: &Ray, ray_tmin: f64, ray_tmax: f64) -> Option<HitRecord> {
+    fn hit(&self, ray: &Ray, interval: &Interval) -> Option<HitRecord> {
         match self {
             Self::Sphere { center, radius } => {
                 let oc = *center - *ray.origin();
@@ -47,7 +47,7 @@ impl Hittable for Shape {
                 let sqrt_discriminant = discriminant.sqrt();
                 let root = [(h - sqrt_discriminant) / a, (h + sqrt_discriminant) / a]
                     .into_iter()
-                    .find(|r| ray_tmin < *r && *r < ray_tmax)?;
+                    .find(|r| interval.contains(r))?;
 
                 let point = ray.at(root);
                 let normal = (point - *center) / *radius;
@@ -71,10 +71,10 @@ impl HittableList {
 }
 
 impl Hittable for HittableList {
-    fn hit(&self, ray: &Ray, ray_tmin: f64, ray_tmax: f64) -> Option<HitRecord> {
+    fn hit(&self, ray: &Ray, interval: &Interval) -> Option<HitRecord> {
         self.0
             .iter()
-            .filter_map(|obj| obj.hit(ray, ray_tmin, ray_tmax))
+            .filter_map(|obj| obj.hit(ray, interval))
             .min_by(|a, b| a.t.total_cmp(&b.t))
     }
 }
