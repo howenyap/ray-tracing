@@ -10,10 +10,16 @@ pub struct Camera {
     pixel00_loc: Point,         // Location of pixel 0, 0 (top left)
     pixel_delta_u: Vector,      // Offset to pixel to the right
     pixel_delta_v: Vector,      // Offset to pixel below
+    max_depth: u32,             // Maximum number of ray bounces into scene
 }
 
 impl Camera {
-    pub fn new(aspect_ratio: f64, image_width: u32, samples_per_pixel: u32) -> Self {
+    pub fn new(
+        aspect_ratio: f64,
+        image_width: u32,
+        samples_per_pixel: u32,
+        max_depth: u32,
+    ) -> Self {
         let image_height: u32 = ((image_width as f64 / aspect_ratio) as u32).max(1);
 
         let pixel_samples_scale = 1. / samples_per_pixel as f64;
@@ -44,6 +50,7 @@ impl Camera {
             pixel00_loc,
             pixel_delta_u,
             pixel_delta_v,
+            max_depth,
         }
     }
 
@@ -56,7 +63,7 @@ impl Camera {
 
             for i in 0..self.image_width {
                 let pixel_colour = (0..self.samples_per_pixel).fold(Colour::black(), |acc, _| {
-                    acc + self.get_ray(i, j).colour(world)
+                    acc + self.get_ray(i, j).colour(world, self.max_depth)
                 }) * self.pixel_samples_scale;
 
                 println!("{pixel_colour}");

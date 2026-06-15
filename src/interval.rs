@@ -13,7 +13,10 @@ impl Interval {
         Self::Universe
     }
 
-    pub fn range(start: f64, end: f64) -> Self {
+    pub fn range(start: impl Into<f64>, end: impl Into<f64>) -> Self {
+        let start = start.into();
+        let end = end.into();
+
         Self::Range(start, end)
     }
 

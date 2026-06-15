@@ -22,11 +22,15 @@ impl Ray {
         self.origin + t * self.direction
     }
 
-    pub fn colour(&self, hittable: &impl Hittable) -> Colour {
-        if let Some(hit_record) = hittable.hit(self, &Interval::range(0., f64::INFINITY)) {
+    pub fn colour(&self, hittable: &impl Hittable, depth: u32) -> Colour {
+        if depth == 0 {
+            return Colour::black();
+        }
+
+        if let Some(hit_record) = hittable.hit(self, &Interval::range(0, f64::INFINITY)) {
             let direction = Vector::random_on_hemisphere(hit_record.normal());
 
-            0.5 * Ray::new(*hit_record.point(), direction).colour(hittable)
+            0.5 * Ray::new(*hit_record.point(), direction).colour(hittable, depth - 1)
         } else {
             let unit_direction = self.direction().unit_vector();
             let a = 0.5 * (unit_direction.y() + 1.);
