@@ -1,18 +1,22 @@
-use crate::{Colour, Hittable, Interval, Point, Ray, Vector};
+use crate::{Colour, Hittable, Point, Ray, Vector};
 
 pub struct Camera {
-    pub aspect_ratio: f64, // Ratio of image width over height
-    pub image_width: u32,  // Rendered image width in pixel count
-    image_height: u32,     // Rendered image height in pixel count
-    center: Point,         // Camera center
-    pixel00_loc: Point,    // Location of pixel 0, 0 (top left)
-    pixel_delta_u: Vector, // Offset to pixel to the right
-    pixel_delta_v: Vector, // Offset to pixel below
+    pub aspect_ratio: f64,      // Ratio of image width over height
+    pub image_width: u32,       // Rendered image width in pixel count
+    pub samples_per_pixel: u32, // Count of random samples per pixel
+    pixel_samples_scale: f64,   // Colour scale factor for pixel samples
+    image_height: u32,          // Rendered image height in pixel count
+    center: Point,              // Camera center
+    pixel00_loc: Point,         // Location of pixel 0, 0 (top left)
+    pixel_delta_u: Vector,      // Offset to pixel to the right
+    pixel_delta_v: Vector,      // Offset to pixel below
 }
 
 impl Camera {
-    pub fn new(aspect_ratio: f64, image_width: u32) -> Self {
+    pub fn new(aspect_ratio: f64, image_width: u32, samples_per_pixel: u32) -> Self {
         let image_height: u32 = ((image_width as f64 / aspect_ratio) as u32).max(1);
+
+        let pixel_samples_scale = 1. / samples_per_pixel as f64;
 
         let center = Point::zero();
 
@@ -33,6 +37,8 @@ impl Camera {
         Self {
             aspect_ratio,
             image_width,
+            samples_per_pixel,
+            pixel_samples_scale,
             image_height,
             center,
             pixel00_loc,
@@ -49,27 +55,24 @@ impl Camera {
             eprintln!("Scanlines remaining: {remaining}");
 
             for i in 0..self.image_width {
-                let pixel_center =
-                    self.pixel00_loc + (i * self.pixel_delta_u) + (j * self.pixel_delta_v);
-                let ray_direction = pixel_center - self.center;
-                let ray = Ray::new(self.center, ray_direction);
-                let pixel_colour = Self::ray_colour(&ray, world);
+                let pixel_colour = (0..self.samples_per_pixel).fold(Colour::black(), |acc, _| {
+                    acc + self.get_ray(i, j).colour(world)
+                }) * self.pixel_samples_scale;
 
                 println!("{pixel_colour}");
             }
         }
     }
 
-    fn ray_colour(ray: &Ray, hittable: &impl Hittable) -> Colour {
-        if let Some(hit_record) = hittable.hit(ray, &Interval::range(0., f64::INFINITY)) {
-            let n = hit_record.normal();
+    fn get_ray(&self, i: u32, j: u32) -> Ray {
+        let offset = Vector::new(rand::random::<f64>() - 0.5, rand::random::<f64>() - 0.5, 0.);
+        let pixel_sample = self.pixel00_loc
+            + ((f64::from(i) + offset.x()) * self.pixel_delta_u)
+            + ((f64::from(j) + offset.y()) * self.pixel_delta_v);
 
-            0.5 * Colour::new(n.x() + 1., n.y() + 1., n.z() + 1.)
-        } else {
-            let unit_direction = ray.direction().unit_vector();
-            let a = 0.5 * (unit_direction.y() + 1.);
+        let ray_origin = self.center;
+        let ray_direction = pixel_sample - ray_origin;
 
-            (1. - a) * Colour::new(1., 1., 1.) + a * Colour::new(0.5, 0.7, 1.)
-        }
+        Ray::new(ray_origin, ray_direction)
     }
 }

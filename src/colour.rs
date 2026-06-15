@@ -1,7 +1,10 @@
 use std::{
     fmt::Display,
+    iter::Sum,
     ops::{Add, Mul},
 };
+
+use crate::Interval;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Colour(f64, f64, f64);
@@ -33,14 +36,11 @@ impl Colour {
 }
 
 impl Display for Colour {
+    // maps colour in range of (0..=1) to (0..=255)
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let r = self.r().clamp(0., 1.);
-        let g = self.g().clamp(0., 1.);
-        let b = self.b().clamp(0., 1.);
-
-        let rbyte = (255.999 * r) as u8;
-        let gbyte = (255.999 * g) as u8;
-        let bbyte = (255.999 * b) as u8;
+        let intensity = Interval::range(0., 0.999);
+        let [rbyte, gbyte, bbyte] =
+            [self.r(), self.g(), self.b()].map(|c| (256. * intensity.clamp(&c)) as u8);
 
         write!(f, "{rbyte} {gbyte} {bbyte}")
     }

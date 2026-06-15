@@ -40,4 +40,12 @@ impl Interval {
             Self::Range(start, end) => start < x && x < end,
         }
     }
+
+    pub fn clamp(&self, x: &f64) -> f64 {
+        match self {
+            Self::Empty => 0.0,
+            Self::Universe => *x,
+            Self::Range(start, end) => (*x).max(*start).min(*end),
+        }
+    }
 }
