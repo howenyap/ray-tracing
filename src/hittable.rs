@@ -23,6 +23,10 @@ impl HitRecord {
     pub fn normal(&self) -> &Vector {
         &self.normal
     }
+
+    pub fn point(&self) -> &Point {
+        &self.point
+    }
 }
 
 pub trait Hittable {

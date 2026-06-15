@@ -1,6 +1,5 @@
 use std::{
     fmt::Display,
-    iter::Sum,
     ops::{Add, Mul},
 };
 

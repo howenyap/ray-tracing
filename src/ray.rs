@@ -1,4 +1,4 @@
-use crate::{Colour, Hittable, Interval, point::Point, vector::Vector};
+use crate::{Colour, Hittable, Interval, Point, Vector};
 
 pub struct Ray {
     origin: Point,
@@ -24,9 +24,9 @@ impl Ray {
 
     pub fn colour(&self, hittable: &impl Hittable) -> Colour {
         if let Some(hit_record) = hittable.hit(self, &Interval::range(0., f64::INFINITY)) {
-            let n = hit_record.normal();
+            let direction = Vector::random_on_hemisphere(hit_record.normal());
 
-            0.5 * Colour::new(n.x() + 1., n.y() + 1., n.z() + 1.)
+            0.5 * Ray::new(*hit_record.point(), direction).colour(hittable)
         } else {
             let unit_direction = self.direction().unit_vector();
             let a = 0.5 * (unit_direction.y() + 1.);

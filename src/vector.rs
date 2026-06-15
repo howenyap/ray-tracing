@@ -52,6 +52,45 @@ impl Vector {
     pub fn unit_vector(&self) -> Self {
         *self / self.len()
     }
+
+    pub fn random() -> Self {
+        Vector(rand::random(), rand::random(), rand::random())
+    }
+
+    pub fn random_with_range(min: impl Into<f64>, max: impl Into<f64>) -> Self {
+        let min = min.into();
+        let max = max.into();
+
+        let random_in_range = |min: f64, max: f64| min + (max - min) * rand::random::<f64>();
+
+        Vector(
+            random_in_range(min, max),
+            random_in_range(min, max),
+            random_in_range(min, max),
+        )
+    }
+
+    pub fn random_on_hemisphere(normal: &Vector) -> Vector {
+        let on_unit_sphere = Self::random_unit_vector();
+
+        if on_unit_sphere.dot(normal) > 0.0 {
+            on_unit_sphere
+        } else {
+            -on_unit_sphere
+        }
+    }
+
+    fn random_unit_vector() -> Vector {
+        loop {
+            let vector = Vector::random_with_range(-1, 1);
+            let len_squared = vector.len_squared();
+
+            if (1e-160..=1.).contains(&len_squared) {
+                // todo: lazy computation of length and length squared
+                return vector / len_squared.sqrt();
+            }
+        }
+    }
 }
 
 impl Display for Vector {
