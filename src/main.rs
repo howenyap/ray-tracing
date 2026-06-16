@@ -10,8 +10,8 @@ fn main() {
 
     let material_ground = Material::lambertian(Colour::new(0.8, 0.8, 0));
     let material_center = Material::lambertian(Colour::new(0.1, 0.2, 0.5));
-    let material_left = Material::metal(Colour::new(0.8, 0.8, 0.8));
-    let material_right = Material::metal(Colour::new(0.8, 0.6, 0.2));
+    let material_left = Material::metal(Colour::new(0.8, 0.8, 0.8), 0.3);
+    let material_right = Material::metal(Colour::new(0.8, 0.6, 0.2), 1);
 
     let world = HittableList::new([
         Object::new(

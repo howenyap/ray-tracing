@@ -20,11 +20,16 @@ impl Scatter for Material {
 
                 Some((*albedo, scattered))
             }
-            Self::Metal { albedo } => {
-                let reflected = ray.direction().unit_vector().reflect(hit_record.normal());
+            Self::Metal { albedo, fuzz } => {
+                let reflected = ray.direction().reflect(hit_record.normal());
+                let reflected = reflected.unit_vector() + (*fuzz * Vector::random_unit_vector());
                 let scattered = Ray::new(hit_record.point(), reflected);
 
-                Some((*albedo, scattered))
+                if reflected.dot(&hit_record.normal()) > 0. {
+                    Some((*albedo, scattered))
+                } else {
+                    None
+                }
             }
         }
     }
