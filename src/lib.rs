@@ -8,6 +8,7 @@ mod point;
 mod ray;
 mod scatter;
 mod shape;
+mod util;
 mod vector;
 
 pub use camera::Camera;
@@ -20,4 +21,5 @@ pub use point::Point;
 pub use ray::Ray;
 pub use scatter::Scatter;
 pub use shape::Shape;
+pub use util::{random_double, random_double_with_range};
 pub use vector::Vector;

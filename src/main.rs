@@ -1,16 +1,19 @@
-use ray_tracing::{Camera, Colour, HittableList, Material, Object, Point, Shape, Vector};
+use ray_tracing::{
+    Camera, Colour, HittableList, Material, Object, Point, Shape, Vector, random_double,
+    random_double_with_range,
+};
 
 fn main() {
     let aspect_ratio = 16. / 9.;
-    let image_width = 400;
-    let samples_per_pixel = 100;
+    let image_width = 1200;
+    let samples_per_pixel = 5;
     let max_depth = 50;
     let vfov = 20.;
-    let look_from = Point::new(-2, 2, 1);
-    let look_at = Point::new(0, 0, -1);
+    let look_from = Point::new(13, 2, 3);
+    let look_at = Point::new(0, 0, 0);
     let vup = Vector::new(0, 1, 0);
-    let defocus_angle = 10.;
-    let focus_distance = 3.4;
+    let defocus_angle = 0.6;
+    let focus_distance = 10.;
 
     let camera = Camera::new(
         aspect_ratio,
@@ -25,22 +28,62 @@ fn main() {
         focus_distance,
     );
 
-    let material_ground = Material::lambertian(Colour::new(0.8, 0.8, 0));
-    let material_center = Material::lambertian(Colour::new(0.1, 0.2, 0.5));
-    let material_left = Material::dielectric(1.5);
-    let material_bubble = Material::dielectric(1. / 1.5);
-    let material_right = Material::metal(Colour::new(0.8, 0.6, 0.2), 1);
+    let mut world = Vec::new();
 
-    let world = HittableList::new([
-        Object::new(
-            Shape::sphere(Point::new(0, -100.5, -1), 100),
-            material_ground,
-        ),
-        Object::new(Shape::sphere(Point::new(0, 0, -1.2), 0.5), material_center),
-        Object::new(Shape::sphere(Point::new(-1, 0, -1), 0.5), material_left),
-        Object::new(Shape::sphere(Point::new(-1, 0, -1), 0.4), material_bubble),
-        Object::new(Shape::sphere(Point::new(1, 0, -1), 0.5), material_right),
-    ]);
+    let ground_material = Material::lambertian(Colour::new(0.5, 0.5, 0.5));
+    world.push(Object::new(
+        Shape::sphere(Point::new(0, -1000, 0), 1000),
+        ground_material,
+    ));
+
+    for a in -11..11 {
+        for b in -11..11 {
+            let choose_mat = random_double();
+            let center = Point::new(
+                f64::from(a) + 0.9 * random_double(),
+                0.2,
+                f64::from(b) + 0.9 * random_double(),
+            );
+
+            if (center - Point::new(4, 0.2, 0)).len() > 0.9 {
+                let sphere_material = if choose_mat < 0.8 {
+                    // diffuse
+                    Material::lambertian(Colour::random() * Colour::random())
+                } else if choose_mat < 0.95 {
+                    // metal
+                    Material::metal(
+                        Colour::random_with_range(0.5, 1.),
+                        random_double_with_range(0., 0.5),
+                    )
+                } else {
+                    // glass
+                    Material::dielectric(1.5)
+                };
+
+                world.push(Object::new(Shape::sphere(center, 0.2), sphere_material));
+            }
+        }
+    }
+
+    let material1 = Material::dielectric(1.5);
+    world.push(Object::new(
+        Shape::sphere(Point::new(0, 1, 0), 1),
+        material1,
+    ));
+
+    let material2 = Material::lambertian(Colour::new(0.4, 0.2, 0.1));
+    world.push(Object::new(
+        Shape::sphere(Point::new(-4, 1, 0), 1),
+        material2,
+    ));
+
+    let material3 = Material::metal(Colour::new(0.7, 0.6, 0.5), 0.);
+    world.push(Object::new(
+        Shape::sphere(Point::new(4, 1, 0), 1),
+        material3,
+    ));
+
+    let world = HittableList::new(world);
 
     camera.render(&world);
 }

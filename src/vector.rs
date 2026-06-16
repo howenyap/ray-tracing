@@ -98,7 +98,11 @@ impl Vector {
 
     pub fn random_in_unit_disk() -> Vector {
         loop {
-            let vector = Vector::random_with_range(-1, 1);
+            let vector = Vector::new(
+                rand::random::<f64>() * 2. - 1.,
+                rand::random::<f64>() * 2. - 1.,
+                0.,
+            );
 
             if vector.len_squared() < 1. {
                 return vector;

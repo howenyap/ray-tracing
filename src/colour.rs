@@ -3,7 +3,7 @@ use std::{
     ops::{Add, Mul},
 };
 
-use crate::Interval;
+use crate::{Interval, random_double, random_double_with_range};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Colour(f64, f64, f64);
@@ -15,6 +15,18 @@ impl Colour {
         let b = b.into();
 
         Colour(r, g, b)
+    }
+
+    pub const fn r(&self) -> f64 {
+        self.0
+    }
+
+    pub const fn g(&self) -> f64 {
+        self.1
+    }
+
+    pub const fn b(&self) -> f64 {
+        self.2
     }
 
     pub const fn black() -> Self {
@@ -33,16 +45,16 @@ impl Colour {
         Colour(0., 0., 1.)
     }
 
-    pub const fn r(&self) -> f64 {
-        self.0
+    pub fn random() -> Self {
+        Colour(random_double(), random_double(), random_double())
     }
 
-    pub const fn g(&self) -> f64 {
-        self.1
-    }
-
-    pub const fn b(&self) -> f64 {
-        self.2
+    pub fn random_with_range(min: f64, max: f64) -> Self {
+        Colour(
+            random_double_with_range(min, max),
+            random_double_with_range(min, max),
+            random_double_with_range(min, max),
+        )
     }
 }
 
