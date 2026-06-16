@@ -84,7 +84,7 @@ impl Vector {
         }
     }
 
-    fn random_unit_vector() -> Vector {
+    pub fn random_unit_vector() -> Vector {
         loop {
             let vector = Vector::random_with_range(-1, 1);
             let len_squared = vector.len_squared();

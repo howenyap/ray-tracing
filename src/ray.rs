@@ -28,7 +28,7 @@ impl Ray {
         }
 
         if let Some(hit_record) = hittable.hit(self, &Interval::range(0.001, f64::INFINITY)) {
-            let direction = Vector::random_on_hemisphere(hit_record.normal());
+            let direction = *hit_record.normal() + Vector::random_unit_vector();
 
             0.5 * Ray::new(*hit_record.point(), direction).colour(hittable, depth - 1)
         } else {
