@@ -21,6 +21,10 @@ impl Colour {
         Colour(0., 0., 0.)
     }
 
+    pub const fn white() -> Self {
+        Colour(1., 1., 1.)
+    }
+
     pub const fn red() -> Self {
         Colour(1., 0., 0.)
     }

@@ -1,4 +1,4 @@
-use ray_tracing::{Camera, HittableList, Material, Object, Point, Shape};
+use ray_tracing::{Camera, Colour, HittableList, Material, Object, Point, Shape};
 
 fn main() {
     let aspect_ratio = 16. / 9.;
@@ -11,11 +11,11 @@ fn main() {
     let world = HittableList::new([
         Object::new(
             Shape::sphere(Point::new(0, 0, -1), 0.5),
-            Material::default(),
+            Material::lambertian(Colour::white()),
         ),
         Object::new(
             Shape::sphere(Point::new(0, -100.5, -1), 100),
-            Material::default(),
+            Material::lambertian(Colour::white()),
         ),
     ]);
 

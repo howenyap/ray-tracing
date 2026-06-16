@@ -1,6 +1,6 @@
 use crate::{Interval, Material, Object, Point, Ray, Shape, Vector};
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct HitRecord {
     point: Point,
     normal: Vector,

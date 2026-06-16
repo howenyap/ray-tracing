@@ -95,6 +95,12 @@ impl Vector {
             }
         }
     }
+
+    pub fn near_zero(&self) -> bool {
+        let s = 1e-8;
+
+        [self.x(), self.y(), self.z()].iter().all(|&x| x.abs() < s)
+    }
 }
 
 impl Display for Vector {
