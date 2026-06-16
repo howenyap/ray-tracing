@@ -33,6 +33,10 @@ impl HitRecord {
     pub fn material(&self) -> &Material {
         &self.material
     }
+
+    pub fn front_face(&self) -> bool {
+        self.front_face
+    }
 }
 
 pub trait Hittable {

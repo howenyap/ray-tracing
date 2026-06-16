@@ -105,6 +105,15 @@ impl Vector {
     pub fn reflect(self, normal: Vector) -> Vector {
         self - 2. * self.dot(&normal) * normal
     }
+
+    pub fn refract(self, normal: Vector, etai_over_etat: f64) -> Vector {
+        let cos_theta = -self.dot(&normal).min(1.0);
+
+        let r_out_perpendicular = etai_over_etat * (self + cos_theta * normal);
+        let r_out_parallel = -(1.0 - r_out_perpendicular.len_squared()).abs().sqrt() * normal;
+
+        r_out_perpendicular + r_out_parallel
+    }
 }
 
 impl Display for Vector {
