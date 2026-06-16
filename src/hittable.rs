@@ -1,4 +1,4 @@
-use crate::{Interval, Point, Ray, Shape, Vector};
+use crate::{Interval, Material, Object, Point, Ray, Shape, Vector};
 
 #[derive(Debug, Default)]
 pub struct HitRecord {
@@ -8,15 +8,17 @@ pub struct HitRecord {
     // true: ray is outside surface
     // false: ray is inside surface
     front_face: bool,
+    material: Material,
 }
 
 impl HitRecord {
-    pub fn new(point: Point, normal: Vector, t: f64, front_face: bool) -> Self {
+    pub fn new(point: Point, normal: Vector, t: f64, front_face: bool, material: Material) -> Self {
         Self {
             point,
             normal,
             t,
             front_face,
+            material,
         }
     }
 
@@ -27,16 +29,20 @@ impl HitRecord {
     pub fn point(&self) -> &Point {
         &self.point
     }
+
+    pub fn material(&self) -> &Material {
+        &self.material
+    }
 }
 
 pub trait Hittable {
     fn hit(&self, ray: &Ray, interval: &Interval) -> Option<HitRecord>;
 }
 
-impl Hittable for Shape {
+impl Hittable for Object {
     fn hit(&self, ray: &Ray, interval: &Interval) -> Option<HitRecord> {
-        match self {
-            Self::Sphere { center, radius } => {
+        match self.shape() {
+            Shape::Sphere { center, radius } => {
                 let oc = *center - *ray.origin();
                 let a = ray.direction().len_squared();
                 let h = ray.direction().dot(&oc);
@@ -60,16 +66,18 @@ impl Hittable for Shape {
                 let front_face = ray.direction().dot(&normal).is_sign_negative();
                 let normal = if front_face { normal } else { -normal };
 
-                Some(HitRecord::new(point, normal, t, front_face))
+                let material = self.material().clone();
+
+                Some(HitRecord::new(point, normal, t, front_face, material))
             }
         }
     }
 }
 
-pub struct HittableList(Vec<Shape>);
+pub struct HittableList(Vec<Object>);
 
 impl HittableList {
-    pub fn new(shapes: impl IntoIterator<Item = Shape>) -> Self {
+    pub fn new(shapes: impl IntoIterator<Item = Object>) -> Self {
         Self(shapes.into_iter().collect())
     }
 }
