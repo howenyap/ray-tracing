@@ -9,6 +9,8 @@ fn main() {
     let look_from = Point::new(-2, 2, 1);
     let look_at = Point::new(0, 0, -1);
     let vup = Vector::new(0, 1, 0);
+    let defocus_angle = 10.;
+    let focus_distance = 3.4;
 
     let camera = Camera::new(
         aspect_ratio,
@@ -19,6 +21,8 @@ fn main() {
         look_from,
         look_at,
         vup,
+        defocus_angle,
+        focus_distance,
     );
 
     let material_ground = Material::lambertian(Colour::new(0.8, 0.8, 0));

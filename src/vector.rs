@@ -96,6 +96,16 @@ impl Vector {
         }
     }
 
+    pub fn random_in_unit_disk() -> Vector {
+        loop {
+            let vector = Vector::random_with_range(-1, 1);
+
+            if vector.len_squared() < 1. {
+                return vector;
+            }
+        }
+    }
+
     pub fn near_zero(&self) -> bool {
         let s = 1e-8;
 
