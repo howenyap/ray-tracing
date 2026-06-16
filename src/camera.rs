@@ -30,14 +30,14 @@ impl Camera {
         let viewport_height = 2.;
         let viewport_width = viewport_height * (image_width as f64 / image_height as f64);
 
-        let viewport_u = Vector::new(viewport_width, 0., 0.);
-        let viewport_v = Vector::new(0., -viewport_height, 0.);
+        let viewport_u = Vector::new(viewport_width, 0, 0);
+        let viewport_v = Vector::new(0, -viewport_height, 0);
 
         let pixel_delta_u = viewport_u / image_width;
         let pixel_delta_v = viewport_v / image_height;
 
         let viewport_upper_left =
-            center - Vector::new(0., 0., focal_length) - viewport_u / 2. - viewport_v / 2.;
+            center - Vector::new(0, 0, focal_length) - viewport_u / 2. - viewport_v / 2.;
         let pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
 
         Self {

@@ -9,7 +9,11 @@ use crate::Interval;
 pub struct Colour(f64, f64, f64);
 
 impl Colour {
-    pub fn new(r: f64, g: f64, b: f64) -> Self {
+    pub fn new(r: impl Into<f64>, g: impl Into<f64>, b: impl Into<f64>) -> Self {
+        let r = r.into();
+        let g = g.into();
+        let b = b.into();
+
         Colour(r, g, b)
     }
 

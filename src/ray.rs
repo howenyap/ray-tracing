@@ -35,7 +35,7 @@ impl Ray {
             let unit_direction = self.direction().unit_vector();
             let a = 0.5 * (unit_direction.y() + 1.);
 
-            (1. - a) * Colour::new(1., 1., 1.) + a * Colour::new(0.5, 0.7, 1.)
+            (1. - a) * Colour::new(1, 1, 1) + a * Colour::new(0.5, 0.7, 1.)
         }
     }
 }

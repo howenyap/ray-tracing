@@ -9,7 +9,11 @@ use crate::point::Point;
 pub struct Vector(f64, f64, f64);
 
 impl Vector {
-    pub fn new(x: f64, y: f64, z: f64) -> Self {
+    pub fn new(x: impl Into<f64>, y: impl Into<f64>, z: impl Into<f64>) -> Self {
+        let x = x.into();
+        let y = y.into();
+        let z = z.into();
+
         Vector(x, y, z)
     }
 

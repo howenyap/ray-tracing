@@ -10,7 +10,11 @@ pub struct Point(f64, f64, f64);
 
 impl Point {
     pub fn new(x: impl Into<f64>, y: impl Into<f64>, z: impl Into<f64>) -> Self {
-        Point(x.into(), y.into(), z.into())
+        let x = x.into();
+        let y = y.into();
+        let z = z.into();
+
+        Point(x, y, z)
     }
 
     pub const fn zero() -> Self {
