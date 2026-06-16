@@ -42,8 +42,12 @@ impl Display for Colour {
     // maps colour in range of (0..=1) to (0..=255)
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let intensity = Interval::range(0., 0.999);
-        let [rbyte, gbyte, bbyte] =
-            [self.r(), self.g(), self.b()].map(|c| (256. * intensity.clamp(&c)) as u8);
+        let [rbyte, gbyte, bbyte] = [self.r(), self.g(), self.b()].map(|c| {
+            // gamma transformation
+            let c = c.max(0.).sqrt();
+
+            (256. * intensity.clamp(&c)) as u8
+        });
 
         write!(f, "{rbyte} {gbyte} {bbyte}")
     }
