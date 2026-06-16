@@ -22,12 +22,12 @@ impl HitRecord {
         }
     }
 
-    pub fn normal(&self) -> &Vector {
-        &self.normal
+    pub fn normal(&self) -> Vector {
+        self.normal
     }
 
-    pub fn point(&self) -> &Point {
-        &self.point
+    pub fn point(&self) -> Point {
+        self.point
     }
 
     pub fn material(&self) -> &Material {
@@ -43,7 +43,7 @@ impl Hittable for Object {
     fn hit(&self, ray: &Ray, interval: &Interval) -> Option<HitRecord> {
         match self.shape() {
             Shape::Sphere { center, radius } => {
-                let oc = *center - *ray.origin();
+                let oc = *center - ray.origin();
                 let a = ray.direction().len_squared();
                 let h = ray.direction().dot(&oc);
                 let c = oc.len_squared() - radius * radius;

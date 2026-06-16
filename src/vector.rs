@@ -101,6 +101,10 @@ impl Vector {
 
         [self.x(), self.y(), self.z()].iter().all(|&x| x.abs() < s)
     }
+
+    pub fn reflect(self, normal: Vector) -> Vector {
+        self - 2. * self.dot(&normal) * normal
+    }
 }
 
 impl Display for Vector {

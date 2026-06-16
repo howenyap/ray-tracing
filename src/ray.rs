@@ -1,4 +1,4 @@
-use crate::{Colour, Hittable, Interval, Point, Vector};
+use crate::{Colour, Hittable, Interval, Point, Scatter, Vector};
 
 pub struct Ray {
     origin: Point,
@@ -10,12 +10,12 @@ impl Ray {
         Self { origin, direction }
     }
 
-    pub fn origin(&self) -> &Point {
-        &self.origin
+    pub fn origin(&self) -> Point {
+        self.origin
     }
 
-    pub fn direction(&self) -> &Vector {
-        &self.direction
+    pub fn direction(&self) -> Vector {
+        self.direction
     }
 
     pub fn at(&self, t: f64) -> Point {
@@ -28,9 +28,11 @@ impl Ray {
         }
 
         if let Some(hit_record) = hittable.hit(self, &Interval::range(0.001, f64::INFINITY)) {
-            let direction = *hit_record.normal() + Vector::random_unit_vector();
-
-            0.5 * Ray::new(*hit_record.point(), direction).colour(hittable, depth - 1)
+            hit_record
+                .material()
+                .scatter(self, &hit_record)
+                .map(|(attenuation, scattered)| attenuation * scattered.colour(hittable, depth - 1))
+                .unwrap_or(Colour::black())
         } else {
             let unit_direction = self.direction().unit_vector();
             let a = 0.5 * (unit_direction.y() + 1.);

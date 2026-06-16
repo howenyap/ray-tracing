@@ -8,15 +8,21 @@ impl Scatter for Material {
     fn scatter(&self, ray: &Ray, hit_record: &HitRecord) -> Option<(Colour, Ray)> {
         match self {
             Self::Lambertian { albedo } => {
-                let scatter_direction = *hit_record.normal() + Vector::random_unit_vector();
+                let scatter_direction = hit_record.normal() + Vector::random_unit_vector();
 
                 let scatter_direction = if scatter_direction.near_zero() {
-                    *hit_record.normal()
+                    hit_record.normal()
                 } else {
                     scatter_direction
                 };
 
-                let scattered = Ray::new(*hit_record.point(), scatter_direction);
+                let scattered = Ray::new(hit_record.point(), scatter_direction);
+
+                Some((*albedo, scattered))
+            }
+            Self::Metal { albedo } => {
+                let reflected = ray.direction().unit_vector().reflect(hit_record.normal());
+                let scattered = Ray::new(hit_record.point(), reflected);
 
                 Some((*albedo, scattered))
             }

@@ -69,6 +69,18 @@ impl Add for Colour {
     }
 }
 
+impl Mul for Colour {
+    type Output = Colour;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        let r = self.r() * rhs.r();
+        let g = self.g() * rhs.g();
+        let b = self.b() * rhs.b();
+
+        Colour(r, g, b)
+    }
+}
+
 impl Mul<f64> for Colour {
     type Output = Colour;
 
