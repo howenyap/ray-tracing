@@ -31,7 +31,7 @@ impl Scatter for Material {
                     None
                 }
             }
-            Self::Dialectric { refraction_index } => {
+            Self::Dielectric { refraction_index } => {
                 let attenuation = Colour::white();
                 let refraction_index = if hit_record.front_face() {
                     1. / refraction_index
@@ -42,12 +42,12 @@ impl Scatter for Material {
                 let unit_direction = ray.direction().unit_vector();
                 let cos_theta = (-unit_direction.dot(&hit_record.normal())).min(1.0);
                 let sin_theta = (1. - cos_theta * cos_theta).sqrt();
-                let can_refract = refraction_index * sin_theta < 1.;
+                let cannot_refract = refraction_index * sin_theta > 1.;
 
-                let direction = if can_refract {
-                    unit_direction.refract(hit_record.normal(), refraction_index)
-                } else {
+                let direction = if cannot_refract {
                     unit_direction.reflect(hit_record.normal())
+                } else {
+                    unit_direction.refract(hit_record.normal(), refraction_index)
                 };
 
                 let ray = Ray::new(hit_record.point(), direction);
