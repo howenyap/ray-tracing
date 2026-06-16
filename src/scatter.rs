@@ -44,7 +44,9 @@ impl Scatter for Material {
                 let sin_theta = (1. - cos_theta * cos_theta).sqrt();
                 let cannot_refract = refraction_index * sin_theta > 1.;
 
-                let direction = if cannot_refract {
+                let direction = if cannot_refract
+                    || reflectance(cos_theta, refraction_index) > rand::random::<f64>()
+                {
                     unit_direction.reflect(hit_record.normal())
                 } else {
                     unit_direction.refract(hit_record.normal(), refraction_index)
@@ -56,4 +58,11 @@ impl Scatter for Material {
             }
         }
     }
+}
+
+fn reflectance(cosine: f64, refraction_index: f64) -> f64 {
+    let r0 = (1. - refraction_index) / (1. + refraction_index);
+    let r0 = r0 * r0;
+
+    r0 + (1. - r0) * (1. - cosine).powf(5.)
 }
