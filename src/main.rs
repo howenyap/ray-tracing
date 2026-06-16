@@ -10,7 +10,8 @@ fn main() {
 
     let material_ground = Material::lambertian(Colour::new(0.8, 0.8, 0));
     let material_center = Material::lambertian(Colour::new(0.1, 0.2, 0.5));
-    let material_left = Material::dielectric(1. / 1.33);
+    let material_left = Material::dielectric(1.5);
+    let material_bubble = Material::dielectric(1. / 1.5);
     let material_right = Material::metal(Colour::new(0.8, 0.6, 0.2), 1);
 
     let world = HittableList::new([
@@ -20,6 +21,7 @@ fn main() {
         ),
         Object::new(Shape::sphere(Point::new(0, 0, -1.2), 0.5), material_center),
         Object::new(Shape::sphere(Point::new(-1, 0, -1), 0.5), material_left),
+        Object::new(Shape::sphere(Point::new(-1, 0, -1), 0.4), material_bubble),
         Object::new(Shape::sphere(Point::new(1, 0, -1), 0.5), material_right),
     ]);
 
