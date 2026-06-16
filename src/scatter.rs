@@ -40,9 +40,17 @@ impl Scatter for Material {
                 };
 
                 let unit_direction = ray.direction().unit_vector();
-                let refracted = unit_direction.refract(hit_record.normal(), refraction_index);
+                let cos_theta = (-unit_direction.dot(&hit_record.normal())).min(1.0);
+                let sin_theta = (1. - cos_theta * cos_theta).sqrt();
+                let can_refract = refraction_index * sin_theta < 1.;
 
-                let ray = Ray::new(hit_record.point(), refracted);
+                let direction = if can_refract {
+                    unit_direction.refract(hit_record.normal(), refraction_index)
+                } else {
+                    unit_direction.reflect(hit_record.normal())
+                };
+
+                let ray = Ray::new(hit_record.point(), direction);
 
                 Some((attenuation, ray))
             }
