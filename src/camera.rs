@@ -19,6 +19,7 @@ impl Camera {
         image_width: u32,
         samples_per_pixel: u32,
         max_depth: u32,
+        vfov: f64,
     ) -> Self {
         let image_height: u32 = ((image_width as f64 / aspect_ratio) as u32).max(1);
 
@@ -27,7 +28,9 @@ impl Camera {
         let center = Point::zero();
 
         let focal_length = 1.;
-        let viewport_height = 2.;
+        let theta = vfov.to_radians();
+        let h = (theta / 2.).tan();
+        let viewport_height = 2. * h * focal_length;
         let viewport_width = viewport_height * (image_width as f64 / image_height as f64);
 
         let viewport_u = Vector::new(viewport_width, 0, 0);

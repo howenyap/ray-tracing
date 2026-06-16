@@ -29,6 +29,10 @@ impl Colour {
         Colour(1., 0., 0.)
     }
 
+    pub const fn blue() -> Self {
+        Colour(0., 0., 1.)
+    }
+
     pub const fn r(&self) -> f64 {
         self.0
     }
